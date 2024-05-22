@@ -68,7 +68,7 @@ void find_two_min(const vector<HUF_Tree>& v, int& p_min, int& p_sec_min)
 	}
 }
 
-void gene(vector<HUF_Tree>& v)
+void Extendv(vector<HUF_Tree>& v)
 {
 	while (true)
 	{
@@ -101,7 +101,7 @@ int main()
 		else
 		{
 			statis(v_HUF, s_in);
-			gene(v_HUF);
+			Extendv(v_HUF);
 			for (auto& i : v_HUF)
 			{
 				cout << i.c << ' ' << i.fre << ' ' << i.left_t + 1 << ' '
