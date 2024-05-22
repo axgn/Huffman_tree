@@ -2,6 +2,7 @@
 #include<vector>
 #include<string>
 #include<limits>
+#include<unordered_map>
 
 using namespace std;
 
@@ -89,6 +90,12 @@ int main()
 {
 	string s_in;
 	vector<HUF_Tree> v_HUF;
+	unordered_map<char, string> map;
+	string result;
+	for (auto& i : s_in)
+	{
+		result += map[i];
+	}
 	bool running = true;
 	while (running)
 	{
