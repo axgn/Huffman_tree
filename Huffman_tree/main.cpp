@@ -1,15 +1,94 @@
 #include<iostream>
 #include<vector>
 #include<string>
-#include<unordered_map>
+#include<limits>
 
 using namespace std;
+
+struct HUF_Tree
+{
+	char c{'0'};
+	int fre{0};
+	int left_t{-1};
+	int right_t{-1};
+	int parent{-1};
+};
+
+int find_c(vector<HUF_Tree> v, char c)
+{
+	for (int i = 0; i < v.size(); i++)
+	{
+		if (v[i].c == c)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void statis(vector<HUF_Tree>& v_HUF, const string& s_in)
+{
+	for (auto& i : s_in)
+	{
+		int pos = find_c(v_HUF, i);
+		if (pos == -1)
+		{
+			v_HUF.push_back({ i, 1 });
+		}
+		else
+		{
+			v_HUF[pos].fre++;
+		}
+	}
+}
+
+void find_two_min(const vector<HUF_Tree>& v, int& p_min, int& p_sec_min)
+{ 
+	int min = INT_MAX;
+	int sec_min = min;
+	p_min = -1;
+	p_sec_min = 0;
+	for (int i = 0; i < v.size(); i++)
+	{
+		if (v[i].parent == -1)
+		{
+			if (v[i].fre < min)
+			{
+				sec_min = min;
+				p_sec_min = p_min;
+				min = v[i].fre;
+				p_min = i;
+			}
+			else if (v[i].fre < sec_min)
+			{
+				sec_min = v[i].fre;
+				p_sec_min = i;
+			}
+		}
+	}
+}
+
+void gene(vector<HUF_Tree>& v)
+{
+	while (true)
+	{
+		int p_min = 0;
+		int p_sec_min = 0;
+		find_two_min(v, p_min, p_sec_min);
+		if (p_sec_min == -1)
+		{
+			break;
+		}
+		v.push_back({ '0',v[p_min].fre + v[p_sec_min].fre,p_min,p_sec_min , -1});
+		v[p_min].parent = v.size() - 1;
+		v[p_sec_min].parent = v.size() - 1;
+	}
+}
 
 int main()
 {
 	string s_in;
-	unordered_map<char, int> freque;
-	unordered_map<char, double> freque2;
+	vector<HUF_Tree> v_HUF;
 	bool running = true;
 	while (running)
 	{
@@ -21,21 +100,12 @@ int main()
 		}
 		else
 		{
-			for (auto& i : s_in)
+			statis(v_HUF, s_in);
+			gene(v_HUF);
+			for (auto& i : v_HUF)
 			{
-				if (!freque.count(i))
-				{
-					freque[i] = 0;
-				}
-				freque[i]++;
-			}
-			for (auto& i : freque)
-			{
-				freque2[i.first] = i.second / (double)s_in.length();
-			}
-			for (auto& i : freque2)
-			{
-				cout << i.first << ' ' << i.second << '\n';
+				cout << i.c << ' ' << i.fre << ' ' << i.left_t + 1 << ' '
+					<< i.right_t + 1 << ' ' << i.parent + 1 << '\n';
 			}
 		}
 	}
