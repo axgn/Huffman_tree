@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<string>
+#include<algorithm>
 #include<limits>
 #include<unordered_map>
 
@@ -107,11 +108,46 @@ void create_map(const vector<HUF_Tree>& v_HUF, unordered_map<char, string>& map,
 	}
 }
 
+void coding(vector<HUF_Tree> v_HUF, unordered_map<char, string>& map)
+{
+	int j = 0;
+	int c{}, f{};
+	for (auto& i : v_HUF)
+	{
+		if (v_HUF[j].c == '0')
+		{
+			break;
+		}
+		j++;
+	}
+	for (int k = 0; k < j; k++)
+	{
+		c = k;
+		f = v_HUF[k].parent;
+		string code{};
+		while (f!=-1)
+		{
+			if (c == v_HUF[f].left_t)
+			{
+				code += '0';
+			}
+			else if (c == v_HUF[f].right_t)
+			{
+				code += '1';
+			}
+			c = f;
+			f = v_HUF[f].parent;
+		}
+		reverse(code.begin(), code.end());
+		map[v_HUF[k].c]= code;
+	}	
+}
+
 int main()
 {
 	string s_in;
 	vector<HUF_Tree> v_HUF;
-	unordered_map<char, string> map;
+	unordered_map<char, string> map,comap;
 	bool running = true;
 	while (running)
 	{
@@ -127,6 +163,11 @@ int main()
 			Extendv(v_HUF);
 			string s = "";
 			create_map(v_HUF, map, v_HUF.size() - 1,s);
+			coding(v_HUF, comap);
+			for (auto& i : comap)
+			{
+				cout << i.first << ':' << i.second << '\n';
+			}
 			for (int i = 0; i < v_HUF.size(); i++)
 			{
 				if (v_HUF[i].c != '0')
