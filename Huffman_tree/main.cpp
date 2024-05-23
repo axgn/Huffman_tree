@@ -86,16 +86,32 @@ void Extendv(vector<HUF_Tree>& v)
 	}
 }
 
+void create_map(const vector<HUF_Tree>& v_HUF, unordered_map<char, string>& map,int i,string& s)
+{
+	if (v_HUF[i].left_t == -1 && v_HUF[i].right_t == -1)
+	{
+		map[v_HUF[i].c] = s;
+		return;
+	}
+	if (v_HUF[i].left_t != -1)
+	{
+		s.push_back('0');
+		create_map(v_HUF, map, v_HUF[i].left_t, s);
+		s.pop_back();
+	}
+	if (v_HUF[i].right_t != -1)
+	{
+		s.push_back('1');
+		create_map(v_HUF, map, v_HUF[i].right_t, s);
+		s.pop_back();
+	}
+}
+
 int main()
 {
 	string s_in;
 	vector<HUF_Tree> v_HUF;
 	unordered_map<char, string> map;
-	string result;
-	for (auto& i : s_in)
-	{
-		result += map[i];
-	}
 	bool running = true;
 	while (running)
 	{
@@ -109,11 +125,31 @@ int main()
 		{
 			statis(v_HUF, s_in);
 			Extendv(v_HUF);
-			for (auto& i : v_HUF)
+			string s = "";
+			create_map(v_HUF, map, v_HUF.size() - 1,s);
+			for (int i = 0; i < v_HUF.size(); i++)
 			{
-				cout << i.c << ' ' << i.fre << ' ' << i.left_t + 1 << ' '
-					<< i.right_t + 1 << ' ' << i.parent + 1 << '\n';
+				if (v_HUF[i].c != '0')
+				{
+					cout << i + 1 << ':' << v_HUF[i].c << ' ';
+				}
 			}
+			cout << '\n';
+			for (int i = 0; i < v_HUF.size(); i++)
+			{
+				cout << i + 1 << ' ' << v_HUF[i].fre << ' ' << v_HUF[i].parent + 1 << ' '
+					<< v_HUF[i].left_t + 1 << ' ' << v_HUF[i].right_t + 1 << '\n';
+			}
+			for (auto& i : map)
+			{
+				cout << i.first << ':' << i.second << '\n';
+			}
+			string result;
+			for (auto& i : s_in)
+			{
+				result += map[i];
+			}
+			cout << result << '\n';
 		}
 	}
 	return 0;
